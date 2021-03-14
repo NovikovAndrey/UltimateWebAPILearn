@@ -1,6 +1,9 @@
 ﻿using Contracts.Interfaces.Logging;
+using Entities;
 using LoggerService;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace UltimateWebAPILearn.Extensions
@@ -30,6 +33,13 @@ namespace UltimateWebAPILearn.Extensions
         public static void ConfigureLoggerService(this IServiceCollection services)
         {
             services.AddScoped<ILoggerManager, LoggerManager>();
+        }
+
+        public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddDbContext<RepositoryContext>(opt =>
+                opt.UseSqlServer(configuration.GetConnectionString("sqlConnection"), b=>
+                b.MigrationsAssembly("UltimateWebAPILearn")));
         }
     }
 }
