@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Contracts.Interfaces.Logging;
+using LoggerService;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace UltimateWebAPILearn.Extensions
@@ -23,6 +25,11 @@ namespace UltimateWebAPILearn.Extensions
             {
 
             });
+        }
+
+        public static void ConfigureLoggerService(this IServiceCollection services)
+        {
+            services.AddScoped<ILoggerManager, LoggerManager>();
         }
     }
 }
