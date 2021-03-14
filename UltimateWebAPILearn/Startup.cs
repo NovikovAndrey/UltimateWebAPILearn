@@ -33,7 +33,7 @@ namespace UltimateWebAPILearn
             services.ConfigureIISIntegration();
 
             services.ConfigureLoggerService();
-
+            services.AddAutoMapper(typeof(Startup));
 
 
             services.AddControllers();
