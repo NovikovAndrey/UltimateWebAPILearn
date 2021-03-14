@@ -3,11 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31105.61
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UltimateWebAPILearn", "UltimateWebAPILearn\UltimateWebAPILearn.csproj", "{23A9C418-A4A4-4E82-95F4-A23A855FC445}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UltimateWebAPILearn", "UltimateWebAPILearn\UltimateWebAPILearn.csproj", "{23A9C418-A4A4-4E82-95F4-A23A855FC445}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts", "Contracts\Contracts.csproj", "{0E111FF6-CFE4-4E15-AE63-39E404170E03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contracts", "Contracts\Contracts.csproj", "{0E111FF6-CFE4-4E15-AE63-39E404170E03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoggerService", "LoggerService\LoggerService.csproj", "{A3C20A16-234D-4A70-8792-239B92937DF5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoggerService", "LoggerService\LoggerService.csproj", "{A3C20A16-234D-4A70-8792-239B92937DF5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities", "Entities\Entities.csproj", "{C42EF1E1-C93B-4C7B-AF0E-4788208ED567}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository", "Repository\Repository.csproj", "{CD07294D-7F64-423E-A02E-391830194280}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +31,14 @@ Global
 		{A3C20A16-234D-4A70-8792-239B92937DF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3C20A16-234D-4A70-8792-239B92937DF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3C20A16-234D-4A70-8792-239B92937DF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C42EF1E1-C93B-4C7B-AF0E-4788208ED567}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C42EF1E1-C93B-4C7B-AF0E-4788208ED567}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C42EF1E1-C93B-4C7B-AF0E-4788208ED567}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C42EF1E1-C93B-4C7B-AF0E-4788208ED567}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD07294D-7F64-423E-A02E-391830194280}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD07294D-7F64-423E-A02E-391830194280}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD07294D-7F64-423E-A02E-391830194280}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD07294D-7F64-423E-A02E-391830194280}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
