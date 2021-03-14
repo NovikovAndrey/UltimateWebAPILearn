@@ -1,16 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using NLog;
+using System.IO;
 using UltimateWebAPILearn.Extensions;
 
 namespace UltimateWebAPILearn
@@ -19,6 +14,9 @@ namespace UltimateWebAPILearn
     {
         public Startup(IConfiguration configuration)
         {
+            LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(),
+"/Constants/nlog.config"));
+
             Configuration = configuration;
         }
 
@@ -30,6 +28,8 @@ namespace UltimateWebAPILearn
             services.AddControllers();
             services.ConfigureCors();
             services.ConfigureIISIntegration();
+
+            services.ConfigureLoggerService();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
