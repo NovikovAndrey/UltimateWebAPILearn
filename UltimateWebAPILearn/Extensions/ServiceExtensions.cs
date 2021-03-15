@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Repository;
+using UltimateWebAPILearn.Formats;
 
 namespace UltimateWebAPILearn.Extensions
 {
@@ -47,6 +48,14 @@ namespace UltimateWebAPILearn.Extensions
         public static void ConfigureRepositoryManager(this IServiceCollection services)
         {
             services.AddScoped<IRepositoryManager, RepositoryManager>();
+        }
+
+        public static IMvcBuilder AddCustomCSVFormatter(this IMvcBuilder mvcBuilder)
+        {
+            return mvcBuilder.AddMvcOptions(config =>
+            {
+                config.OutputFormatters.Add(new CsvOutputFormatter());
+            });
         }
     }
 }
