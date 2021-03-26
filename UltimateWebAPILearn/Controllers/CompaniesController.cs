@@ -100,5 +100,21 @@ namespace UltimateWebAPILearn.Controllers
             return CreatedAtRoute("CompanyCollection", new { ids }, companyCollectionToReturn);
         }
 
+        [HttpDelete("{id}")]
+        public IActionResult DeleteCompany(Guid id)
+        {
+            var company = _repository.Company.GetCompany(id, trackChanges: false);
+            if (company == null)
+            {
+                _logger.LogInfo($"Company with id {id} doesn't exists");
+                return NotFound();
+            }
+
+            _repository.Company.DelteCompany(company);
+            _repository.Save();
+
+            return NoContent();
+        }
+
     }
 }
