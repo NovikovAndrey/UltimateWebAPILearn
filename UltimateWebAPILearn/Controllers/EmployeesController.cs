@@ -65,6 +65,13 @@ namespace UltimateWebAPILearn.Controllers
                 _logger.LogError("EmployeeForCreationDto object sent from client is null.");
                 return BadRequest("EmployeeForCreationDto object is null");
             }
+
+            if(!ModelState.IsValid)
+            {
+                _logger.LogError("Invalid model");
+                return UnprocessableEntity(ModelState);
+            }
+
             var company = _repository.Company.GetCompany(companyId, trackChanges: false);
             if (company == null)
             {
@@ -117,6 +124,13 @@ namespace UltimateWebAPILearn.Controllers
                 return BadRequest("EmployeeForUpdateDto object is null");
             }
 
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("Invalid model state for the EmployeeForUpdateDto object");
+                return UnprocessableEntity(ModelState);
+            }
+
+
             var company = _repository.Company.GetCompany(companyId, trackChanges: false);
             if(company == null)
             {
@@ -163,7 +177,15 @@ namespace UltimateWebAPILearn.Controllers
 
             var employeeToPatch = _mapper.Map<EmployeeForUpdateDto>(employeeEntity);
 
-            patchDoc.ApplyTo(employeeToPatch);
+            patchDoc.ApplyTo(employeeToPatch, ModelState);
+
+            TryValidateModel(employeeToPatch);
+
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("Invalid model state for the patch document");
+                return UnprocessableEntity(ModelState);
+            }
 
             _mapper.Map(employeeToPatch, employeeEntity);
 
