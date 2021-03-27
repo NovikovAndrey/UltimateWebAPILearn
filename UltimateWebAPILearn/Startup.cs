@@ -32,6 +32,10 @@ namespace UltimateWebAPILearn
             services.ConfigureRepositoryManager();
 
             services.AddScoped<ValidationFilterAttribute>();
+            services.AddScoped<ValidateCompanyExistsAttribute>();
+            services.AddScoped<ValidateEmployeeForCompanyExistsAttribute>();
+            services.AddScoped<ValidateEmployeeForCompanyExistsAttributeGet>();
+            services.AddScoped<ValidateGetCompanyExistsAttribute>();
 
             services.ConfigureCors();
             services.ConfigureIISIntegration();
