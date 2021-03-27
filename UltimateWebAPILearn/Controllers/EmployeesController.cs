@@ -65,6 +65,13 @@ namespace UltimateWebAPILearn.Controllers
                 _logger.LogError("EmployeeForCreationDto object sent from client is null.");
                 return BadRequest("EmployeeForCreationDto object is null");
             }
+
+            if(!ModelState.IsValid)
+            {
+                _logger.LogError("Invalid model");
+                return UnprocessableEntity(ModelState);
+            }
+
             var company = _repository.Company.GetCompany(companyId, trackChanges: false);
             if (company == null)
             {

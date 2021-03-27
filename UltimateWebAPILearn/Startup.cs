@@ -2,6 +2,7 @@ using Contracts.Interfaces.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -28,13 +29,17 @@ namespace UltimateWebAPILearn
         {
             services.ConfigureSqlContext(Configuration);
             services.ConfigureRepositoryManager();
-            
+
             services.ConfigureCors();
             services.ConfigureIISIntegration();
 
             services.ConfigureLoggerService();
             services.AddAutoMapper(typeof(Startup));
 
+            services.Configure<ApiBehaviorOptions>(option =>
+                {
+                    option.SuppressModelStateInvalidFilter = true;
+                });
 
             services.AddControllers(config =>
             {
@@ -44,7 +49,7 @@ namespace UltimateWebAPILearn
             }).AddNewtonsoftJson()
                 .AddXmlDataContractSerializerFormatters()
                 .AddCustomCSVFormatter();
-                
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
