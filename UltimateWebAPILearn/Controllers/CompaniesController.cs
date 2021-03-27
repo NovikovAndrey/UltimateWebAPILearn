@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using UltimateWebAPILearn.ActionFilters;
 using UltimateWebAPILearn.ModelBinders;
 
 namespace UltimateWebAPILearn.Controllers
@@ -30,12 +31,12 @@ namespace UltimateWebAPILearn.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCompanies()
         {
-            var companiesDto = _mapper.Map<IEnumerable<CompanyDto>>( await _repository.Company.GetAllCompaniesAsync(false));
+            var companiesDto = _mapper.Map<IEnumerable<CompanyDto>>(await _repository.Company.GetAllCompaniesAsync(false));
             return Ok(companiesDto);
         }
 
         [HttpGet("collection/({ids})", Name = "CompanyCollection")]
-        public async Task<IActionResult> GetCompanyCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))]IEnumerable<Guid> ids)
+        public async Task<IActionResult> GetCompanyCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<Guid> ids)
         {
             if (ids == null)
             {
@@ -53,36 +54,19 @@ namespace UltimateWebAPILearn.Controllers
         }
 
         [HttpGet("{id}", Name = "CompanyById")]
+        [ServiceFilter(typeof(ValidateGetCompanyExistsAttribute))]
         public async Task<IActionResult> GetCompany(Guid id)
         {
-            var company = await _repository.Company.GetCompanyAsync(id, trackChanges: false);
-            if (company == null)
-            {
-                _logger.LogInfo($"Company with id: {id} doesn't exist in the database.");
-                return NotFound();
-            }
-            else
-            {
-                var companyDto = _mapper.Map<CompanyDto>(company);
-                return Ok(companyDto);
-            }
+            var company = HttpContext.Items["company"] as Company;
+
+            var companyDto = _mapper.Map<CompanyDto>(company);
+            return Ok(companyDto);
         }
 
         [HttpPost]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateCompany([FromBody] CompanyForCreationDto company)
         {
-            if (company == null)
-            {
-                _logger.LogError("CompanyForCreationDto object sent from client is null.");
-                return BadRequest("CompanyForCreationDto object is null");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                _logger.LogError("Invalid model");
-                return UnprocessableEntity(ModelState);
-            }
-
             var companyEntity = _mapper.Map<Company>(company);
             _repository.Company.CreateCompany(companyEntity);
             await _repository.SaveAsync();
@@ -110,14 +94,10 @@ namespace UltimateWebAPILearn.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ServiceFilter(typeof(ValidateCompanyExistsAttribute))]
         public async Task<IActionResult> DeleteCompany(Guid id)
         {
-            var company = await _repository.Company.GetCompanyAsync(id, trackChanges: false);
-            if (company == null)
-            {
-                _logger.LogInfo($"Company with id {id} doesn't exists");
-                return NotFound();
-            }
+            var company = HttpContext.Items["company"] as Company;
 
             _repository.Company.DelteCompany(company);
             await _repository.SaveAsync();
@@ -126,20 +106,11 @@ namespace UltimateWebAPILearn.Controllers
         }
 
         [HttpPut("{id}")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [ServiceFilter(typeof(ValidateCompanyExistsAttribute))]
         public async Task<IActionResult> UpdateCompany(Guid id, [FromBody] CompanyForUpdateDto company)
         {
-            if(company == null)
-            {
-                _logger.LogError("CompanyForUpdateDto object sent from client is null");
-                return BadRequest("CompanyFromUpdateDto object is null");
-            }
-
-            var companyEntity =await _repository.Company.GetCompanyAsync(id, trackChanges: true);
-            if (companyEntity == null)
-            {
-                _logger.LogInfo($"Company with id {id} doesn't exist");
-                return NotFound();
-            }
+            var companyEntity = HttpContext.Items["company"] as Company;
 
             _mapper.Map(company, companyEntity);
             await _repository.SaveAsync();

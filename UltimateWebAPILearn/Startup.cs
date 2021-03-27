@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NLog;
 using System.IO;
+using UltimateWebAPILearn.ActionFilters;
 using UltimateWebAPILearn.Extensions;
 
 namespace UltimateWebAPILearn
@@ -29,6 +30,12 @@ namespace UltimateWebAPILearn
         {
             services.ConfigureSqlContext(Configuration);
             services.ConfigureRepositoryManager();
+
+            services.AddScoped<ValidationFilterAttribute>();
+            services.AddScoped<ValidateCompanyExistsAttribute>();
+            services.AddScoped<ValidateEmployeeForCompanyExistsAttribute>();
+            services.AddScoped<ValidateEmployeeForCompanyExistsAttributeGet>();
+            services.AddScoped<ValidateGetCompanyExistsAttribute>();
 
             services.ConfigureCors();
             services.ConfigureIISIntegration();

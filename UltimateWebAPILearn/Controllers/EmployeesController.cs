@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UltimateWebAPILearn.ActionFilters;
 
 namespace UltimateWebAPILearn.Controllers
 {
@@ -40,39 +41,19 @@ namespace UltimateWebAPILearn.Controllers
         }
 
         [HttpGet("{id}", Name = "GetEmployeeForCompany")]
-        public async Task<IActionResult> GetEmployeeForCompany(Guid companyId, Guid id)
+        [ServiceFilter(typeof(ValidateEmployeeForCompanyExistsAttributeGet))]
+        public IActionResult GetEmployeeForCompany(Guid companyId, Guid id)
         {
-            var company = await _repository.Company.GetCompanyAsync(companyId, trackChanges: false);
-            if (company == null)
-            {
-                _logger.LogInfo($"Company with id: {companyId} doesn't exist in the database.");
-                return NotFound();
-            }
-            var employeeDb = await _repository.Employee.GetEmployeeAsync(companyId, id, trackChanges: false);
-            if (employeeDb == null)
-            {
-                _logger.LogInfo($"Employee with id: {id} doesn't exist in the database.");
-                return NotFound();
-            }
+            var employeeDb = HttpContext.Items["employee"] as Employee;
+
             var employee = _mapper.Map<EmployeeDto>(employeeDb);
             return Ok(employee);
         }
 
         [HttpPost]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateEmployeeForCompany(Guid companyId, [FromBody] EmployeeForCreationDto employee)
         {
-            if (employee == null)
-            {
-                _logger.LogError("EmployeeForCreationDto object sent from client is null.");
-                return BadRequest("EmployeeForCreationDto object is null");
-            }
-
-            if(!ModelState.IsValid)
-            {
-                _logger.LogError("Invalid model");
-                return UnprocessableEntity(ModelState);
-            }
-
             var company = await _repository.Company.GetCompanyAsync(companyId, trackChanges: false);
             if (company == null)
             {
@@ -93,22 +74,10 @@ namespace UltimateWebAPILearn.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ServiceFilter(typeof(ValidateEmployeeForCompanyExistsAttribute))]
         public async Task<IActionResult> DeleteEmployeeForCompany(Guid companyId, Guid id)
         {
-            var company = await _repository.Company.GetCompanyAsync(companyId, trackChanges: false);
-            if (company == null)
-            {
-                _logger.LogInfo($"Employee with id: {id} doesn't exist in the database");
-                return NotFound();
-            }
-
-            var employeeForCompany = await _repository.Employee.GetEmployeeAsync(companyId, id, trackChanges: false);
-
-            if(employeeForCompany == null)
-            {
-                _logger.LogInfo($"Employee with id: {id} doesn't exist in database");
-                return NotFound();
-            }
+            var employeeForCompany = HttpContext.Items["employee"] as Employee;
 
             _repository.Employee.DeleteEmployee(employeeForCompany);
             await _repository.SaveAsync();
@@ -117,34 +86,11 @@ namespace UltimateWebAPILearn.Controllers
         }
 
         [HttpPut("{id}")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [ServiceFilter(typeof(ValidateEmployeeForCompanyExistsAttribute))]
         public async Task<IActionResult> UpdateEmployeeForCompany(Guid companyId, Guid id, [FromBody] EmployeeForUpdateDto employee)
         {
-            if (employee == null)
-            {
-                _logger.LogError("EmployeeForUpdateDto object sent from client is null");
-                return BadRequest("EmployeeForUpdateDto object is null");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                _logger.LogError("Invalid model state for the EmployeeForUpdateDto object");
-                return UnprocessableEntity(ModelState);
-            }
-
-
-            var company =await _repository.Company.GetCompanyAsync(companyId, trackChanges: false);
-            if(company == null)
-            {
-                _logger.LogInfo($"Company with id {id} doesn't exist");
-                return NotFound();
-            }
-
-            var employeeEntity =await _repository.Employee.GetEmployeeAsync(companyId, id, trackChanges: true);
-            if(employeeEntity == null)
-            {
-                _logger.LogInfo($"Employee with id {id} doesn't exist");
-                return NotFound();
-            }
+            var employeeEntity = HttpContext.Items["employee"] as Employee;
 
             _mapper.Map(employee, employeeEntity);
             await _repository.SaveAsync();
@@ -153,28 +99,16 @@ namespace UltimateWebAPILearn.Controllers
         }
 
         [HttpPatch("{id}")]
+        [ServiceFilter(typeof(ValidateEmployeeForCompanyExistsAttribute))]
         public async Task<IActionResult> PartiallyUpdateEmployeeForCompany(Guid companyId, Guid id, 
             [FromBody] JsonPatchDocument<EmployeeForUpdateDto> patchDoc)
         {
-            if(patchDoc == null)
+            if (patchDoc == null)
             {
-                _logger.LogError("patchDoc is null");
-                return BadRequest();
+                _logger.LogError("patchDoc object sent from client is null.");
+                return BadRequest("patchDoc object is null");
             }
-
-            var company =await _repository.Company.GetCompanyAsync(companyId, trackChanges: true);
-            if(company == null)
-            {
-                _logger.LogInfo($"Company with id {id} doesn't exist");
-                return NotFound();
-            }
-
-            var employeeEntity =await _repository.Employee.GetEmployeeAsync(companyId, id, trackChanges: true);
-            if(employeeEntity == null)
-            {
-                _logger.LogInfo($"Employee with id {id} doesn't exist");
-                return NotFound();
-            }
+            var employeeEntity = HttpContext.Items["employee"] as Employee;
 
             var employeeToPatch = _mapper.Map<EmployeeForUpdateDto>(employeeEntity);
 
