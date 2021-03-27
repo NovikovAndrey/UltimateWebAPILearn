@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UltimateWebAPILearn.ActionFilters;
 
 namespace UltimateWebAPILearn.Controllers
 {
@@ -59,20 +60,9 @@ namespace UltimateWebAPILearn.Controllers
         }
 
         [HttpPost]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateEmployeeForCompany(Guid companyId, [FromBody] EmployeeForCreationDto employee)
         {
-            if (employee == null)
-            {
-                _logger.LogError("EmployeeForCreationDto object sent from client is null.");
-                return BadRequest("EmployeeForCreationDto object is null");
-            }
-
-            if(!ModelState.IsValid)
-            {
-                _logger.LogError("Invalid model");
-                return UnprocessableEntity(ModelState);
-            }
-
             var company = await _repository.Company.GetCompanyAsync(companyId, trackChanges: false);
             if (company == null)
             {
@@ -117,21 +107,9 @@ namespace UltimateWebAPILearn.Controllers
         }
 
         [HttpPut("{id}")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> UpdateEmployeeForCompany(Guid companyId, Guid id, [FromBody] EmployeeForUpdateDto employee)
         {
-            if (employee == null)
-            {
-                _logger.LogError("EmployeeForUpdateDto object sent from client is null");
-                return BadRequest("EmployeeForUpdateDto object is null");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                _logger.LogError("Invalid model state for the EmployeeForUpdateDto object");
-                return UnprocessableEntity(ModelState);
-            }
-
-
             var company =await _repository.Company.GetCompanyAsync(companyId, trackChanges: false);
             if(company == null)
             {
@@ -153,15 +131,10 @@ namespace UltimateWebAPILearn.Controllers
         }
 
         [HttpPatch("{id}")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> PartiallyUpdateEmployeeForCompany(Guid companyId, Guid id, 
             [FromBody] JsonPatchDocument<EmployeeForUpdateDto> patchDoc)
         {
-            if(patchDoc == null)
-            {
-                _logger.LogError("patchDoc is null");
-                return BadRequest();
-            }
-
             var company =await _repository.Company.GetCompanyAsync(companyId, trackChanges: true);
             if(company == null)
             {
