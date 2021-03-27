@@ -1,5 +1,6 @@
 ﻿using Contracts.Interfaces.Entities;
 using Entities;
+using System.Threading.Tasks;
 
 namespace Repository
 {
@@ -34,9 +35,6 @@ namespace Repository
             }
         }
 
-        public void Save()
-        {
-            _repositoryContext.SaveChanges();
-        }
+        public Task SaveAsync() => _repositoryContext.SaveChangesAsync();
     }
 }
