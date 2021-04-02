@@ -1,7 +1,7 @@
 ﻿using Entities.Models;
 using Repository.Extensions.Utility;
-using System.Linq;
 using System.Linq.Dynamic.Core;
+using System.Linq;
 
 namespace Repository.Extensions
 {
