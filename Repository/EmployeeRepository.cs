@@ -32,7 +32,9 @@ namespace Repository
 
         public async Task<Employee> GetEmployeeAsync(Guid companyId, Guid id, bool trackChanges)
         {
-            return await FindByCondition(e => e.CompanyId.Equals(companyId) && e.Id.Equals(id), trackChanges).SingleOrDefaultAsync();
+            return await FindByCondition
+                (e => e.CompanyId.Equals(companyId) && e.Id.Equals(id), trackChanges)
+                .SingleOrDefaultAsync();
         }
 
         public async Task<PagedList<Employee>> GetEmployeesAsync(Guid companyId, EmployeeParameters employeeParameters, bool trackChanges)
@@ -41,6 +43,7 @@ namespace Repository
             && (e.Age>=employeeParameters.MinAge && e.Age<= employeeParameters.MaxAge), trackChanges)
                 .FilterEmployees(employeeParameters.MinAge, employeeParameters.MaxAge)
                 .Search(employeeParameters.SearchTerm)
+                .Sort(employeeParameters.OrderBy)
                 .OrderBy(e => e.Name)
                 .ToListAsync();
             return PagedList<Employee>
