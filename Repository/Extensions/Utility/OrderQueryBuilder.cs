@@ -7,7 +7,7 @@ namespace Repository.Extensions.Utility
 {
     public static class OrderQueryBuilder
     {
-        internal static object CreateOrderQuery<T>(string orderByQueryString)
+        internal static string CreateOrderQuery<T>(string orderByQueryString)
         {
             var orderParams = orderByQueryString.Trim().Split(',');
             var propertyInfos = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
