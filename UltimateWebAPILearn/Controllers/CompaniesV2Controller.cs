@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace UltimateWebAPILearn.Controllers
 {
-    [ApiVersion("2.0")]
     [Route("api/{v:apiversion}/companies")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = "v2")]
     public class CompaniesV2Controller : ControllerBase
     {
         private readonly IRepositoryManager _repository;
