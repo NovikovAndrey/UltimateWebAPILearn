@@ -36,7 +36,6 @@ namespace UltimateWebAPILearn.Controllers
         }
 
 
-        [HttpGet]
         [HttpGet(Name = "GetCompanies")]
         public async Task<IActionResult> GetCompanies()
         {
@@ -71,7 +70,6 @@ namespace UltimateWebAPILearn.Controllers
             return Ok(companyDto);
         }
 
-        [HttpPost]
         [HttpPost(Name = "CreateCompany")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateCompany([FromBody] CompanyForCreationDto company)

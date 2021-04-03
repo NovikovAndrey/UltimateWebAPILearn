@@ -21,8 +21,7 @@ namespace UltimateWebAPILearn
     {
         public Startup(IConfiguration configuration)
         {
-            LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(),
-"/Constants/nlog.config"));
+            LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/Constants/nlog.config"));
 
             Configuration = configuration;
         }
@@ -32,36 +31,37 @@ namespace UltimateWebAPILearn
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.ConfigureCors();
+            services.ConfigureIISIntegration();
+            services.ConfigureLoggerService();
             services.ConfigureSqlContext(Configuration);
             services.ConfigureRepositoryManager();
-            
+            services.AddAutoMapper(typeof(Startup));
             services.AddScoped<ValidationFilterAttribute>();
             services.AddScoped<ValidateCompanyExistsAttribute>();
             services.AddScoped<ValidateEmployeeForCompanyExistsAttribute>();
-            services.AddScoped<ValidateEmployeeForCompanyExistsAttributeGet>();
-            services.AddScoped<ValidateGetCompanyExistsAttribute>();
-            services.AddScoped<IDataShaper<EmployeeDto>, DataShaper<EmployeeDto>>();
-            
-            services.ConfigureCors();
-            services.ConfigureIISIntegration();
-            services.AddScoped<EmployeeLinks>();
-            services.AddScoped<ValidateMediaTypeAttribute>();
-            services.ConfigureLoggerService();
-            services.AddAutoMapper(typeof(Startup));
 
-            services.Configure<ApiBehaviorOptions>(option =>
-                {
-                    option.SuppressModelStateInvalidFilter = true;
-                });
+            services.AddScoped<IDataShaper<EmployeeDto>, DataShaper<EmployeeDto>>();
+
+            services.AddScoped<ValidateMediaTypeAttribute>();
+
+            services.AddScoped<EmployeeLinks>();
+
+            services.ConfigureVersioning();
+
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
 
             services.AddControllers(config =>
             {
                 config.RespectBrowserAcceptHeader = true;
-
                 config.ReturnHttpNotAcceptable = true;
             }).AddNewtonsoftJson()
-                .AddXmlDataContractSerializerFormatters()
-                .AddCustomCSVFormatter();
+           .AddXmlDataContractSerializerFormatters()
+           .AddCustomCSVFormatter();
+
             services.AddCustomMediaTypes();
         }
 
