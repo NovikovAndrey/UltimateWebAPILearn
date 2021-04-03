@@ -33,6 +33,7 @@ namespace UltimateWebAPILearn.Controllers
         }
 
         [HttpGet]
+        [HttpHead]
         [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
         public async Task<IActionResult> GetEmployeesForCompany(Guid companyId, [FromBody] EmployeeParameters employeeParameters)
         {
