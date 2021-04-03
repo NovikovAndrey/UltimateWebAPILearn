@@ -2,6 +2,7 @@
 {
     public abstract class RequestParameters
     {
+        public string Fields { get; set; }
         const int maxPageSize = 50;
         public int PageNumber { get; set; } = 1;
 
@@ -34,7 +35,5 @@
         public bool ValidAgeRange => MaxAge > MinAge;
 
         public string SearchTerm { get; set; }
-
-
     }
 }

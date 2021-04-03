@@ -54,10 +54,9 @@ namespace UltimateWebAPILearn.Controllers
         }
 
         [HttpGet("{id}", Name = "CompanyById")]
-        [ServiceFilter(typeof(ValidateGetCompanyExistsAttribute))]
         public async Task<IActionResult> GetCompany(Guid id)
         {
-            var company = HttpContext.Items["company"] as Company;
+            var company = await _repository.Company.GetCompanyAsync(id, trackChanges: false);
 
             var companyDto = _mapper.Map<CompanyDto>(company);
             return Ok(companyDto);
