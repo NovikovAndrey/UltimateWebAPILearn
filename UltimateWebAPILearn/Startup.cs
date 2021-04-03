@@ -48,6 +48,8 @@ namespace UltimateWebAPILearn
             services.AddScoped<EmployeeLinks>();
 
             services.ConfigureVersioning();
+            services.ConfigureResponseCaching();
+            services.ConfigureHttpCacheHeaders();
 
             services.Configure<ApiBehaviorOptions>(options =>
             {
@@ -58,11 +60,17 @@ namespace UltimateWebAPILearn
             {
                 config.RespectBrowserAcceptHeader = true;
                 config.ReturnHttpNotAcceptable = true;
+                config.CacheProfiles.Add("120SecondsDuration", new CacheProfile
+                {
+                    Duration = 120
+                });
             }).AddNewtonsoftJson()
            .AddXmlDataContractSerializerFormatters()
            .AddCustomCSVFormatter();
 
             services.AddCustomMediaTypes();
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,6 +90,9 @@ namespace UltimateWebAPILearn
             {
                 ForwardedHeaders = ForwardedHeaders.All
             });
+
+            app.UseResponseCaching();
+            app.UseHttpCacheHeaders();
 
             app.UseRouting();
 

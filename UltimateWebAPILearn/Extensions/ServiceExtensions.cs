@@ -2,6 +2,7 @@
 using Contracts.Interfaces.Logging;
 using Entities;
 using LoggerService;
+using Marvin.Cache.Headers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -44,7 +45,7 @@ namespace UltimateWebAPILearn.Extensions
         public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<RepositoryContext>(opt =>
-                opt.UseSqlServer(configuration.GetConnectionString("sqlConnection"), b=>
+                opt.UseSqlServer(configuration.GetConnectionString("sqlConnection"), b =>
                 b.MigrationsAssembly("UltimateWebAPILearn")));
         }
 
@@ -68,7 +69,7 @@ namespace UltimateWebAPILearn.Extensions
                 var newtonsoftJsonOutputFormatter = config.OutputFormatters
                 .OfType<NewtonsoftJsonOutputFormatter>()?.FirstOrDefault();
 
-                if(newtonsoftJsonOutputFormatter != null)
+                if (newtonsoftJsonOutputFormatter != null)
                 {
                     newtonsoftJsonOutputFormatter.SupportedMediaTypes.Add("application/vnd.codemaze.hateoas+json");
                     newtonsoftJsonOutputFormatter.SupportedMediaTypes.Add("application/vnd.codemaze.apiroot+json");
@@ -78,7 +79,7 @@ namespace UltimateWebAPILearn.Extensions
                 var xmlOutputFormatter = config.OutputFormatters
                 .OfType<XmlDataContractSerializerOutputFormatter>()?.FirstOrDefault();
 
-                if(xmlOutputFormatter != null)
+                if (xmlOutputFormatter != null)
                 {
                     xmlOutputFormatter.SupportedMediaTypes.Add("application/vnd.codemaze.hateoas+xml");
                     xmlOutputFormatter.SupportedMediaTypes.Add("application/vnd.codemaze.apiroot+xml");
@@ -95,5 +96,18 @@ namespace UltimateWebAPILearn.Extensions
                 opt.DefaultApiVersion = new ApiVersion(1, 0);
             });
         }
+
+        public static void ConfigureResponseCaching(this IServiceCollection services) => services.AddResponseCaching();
+
+        public static void ConfigureHttpCacheHeaders(this IServiceCollection services)
+            => services.AddHttpCacheHeaders((expirationOpt) =>
+            {
+                expirationOpt.MaxAge = 65;
+                expirationOpt.CacheLocation = CacheLocation.Private;
+            },
+            (validationOpt) =>
+            {
+                validationOpt.MustRevalidate = true;
+            });
     }
 }
