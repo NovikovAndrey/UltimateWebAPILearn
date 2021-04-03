@@ -37,6 +37,7 @@ namespace UltimateWebAPILearn.Controllers
 
 
         [HttpGet]
+        [HttpGet(Name = "GetCompanies")]
         public async Task<IActionResult> GetCompanies()
         {
             var companiesDto = _mapper.Map<IEnumerable<CompanyDto>>(await _repository.Company.GetAllCompaniesAsync(false));
@@ -71,6 +72,7 @@ namespace UltimateWebAPILearn.Controllers
         }
 
         [HttpPost]
+        [HttpPost(Name = "CreateCompany")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateCompany([FromBody] CompanyForCreationDto company)
         {
