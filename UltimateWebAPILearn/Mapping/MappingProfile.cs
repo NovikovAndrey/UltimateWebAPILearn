@@ -16,6 +16,8 @@ namespace UltimateWebAPILearn.Mapping
             CreateMap<EmployeeForCreationDto, Employee>();
             CreateMap<EmployeeForUpdateDto, Employee>().ReverseMap();
             CreateMap<CompanyForCreationDto, Company>();
+            CreateMap<UserForRegistrationDto, User>();
+
         }
     }
 }
