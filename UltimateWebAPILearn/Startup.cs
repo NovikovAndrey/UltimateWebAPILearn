@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NLog;
 using Repository.DataShaping;
+using Repository.Extensions;
 using System.IO;
 using UltimateWebAPILearn.ActionFilters;
 using UltimateWebAPILearn.Extensions;
@@ -32,6 +33,12 @@ namespace UltimateWebAPILearn
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication();
+            services.ConfigureIdentity();
+            services.ConfigureJWT(Configuration);
+
+
+
             services.ConfigureCors();
             services.ConfigureIISIntegration();
             services.ConfigureLoggerService();
@@ -47,6 +54,8 @@ namespace UltimateWebAPILearn
             services.AddScoped<ValidateMediaTypeAttribute>();
 
             services.AddScoped<EmployeeLinks>();
+
+            services.AddScoped<IAuthenticationManager, AuthenticationManager>();
 
             services.ConfigureVersioning();
             services.ConfigureResponseCaching();
@@ -103,6 +112,7 @@ namespace UltimateWebAPILearn
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

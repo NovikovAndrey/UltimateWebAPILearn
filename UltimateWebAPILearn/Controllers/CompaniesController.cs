@@ -4,6 +4,7 @@ using Contracts.Interfaces.Logging;
 using Entities.DataTransferObjects;
 using Entities.Models;
 using Marvin.Cache.Headers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -38,7 +39,7 @@ namespace UltimateWebAPILearn.Controllers
         }
 
 
-        [HttpGet(Name = "GetCompanies")]
+        [HttpGet(Name = "GetCompanies"), Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetCompanies()
         {
             var companiesDto = _mapper.Map<IEnumerable<CompanyDto>>(await _repository.Company.GetAllCompaniesAsync(false));
