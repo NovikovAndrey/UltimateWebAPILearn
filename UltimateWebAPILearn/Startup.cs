@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using Contracts.Interfaces.Entities;
 using Contracts.Interfaces.Logging;
 using Entities.DataTransferObjects;
@@ -50,6 +51,10 @@ namespace UltimateWebAPILearn
             services.ConfigureVersioning();
             services.ConfigureResponseCaching();
             services.ConfigureHttpCacheHeaders();
+            services.AddMemoryCache();
+
+            services.ConfigureRateLimitingOptions();
+            services.AddHttpContextAccessor();
 
             services.Configure<ApiBehaviorOptions>(options =>
             {
@@ -93,6 +98,8 @@ namespace UltimateWebAPILearn
 
             app.UseResponseCaching();
             app.UseHttpCacheHeaders();
+
+            app.UseIpRateLimiting();
 
             app.UseRouting();
 
