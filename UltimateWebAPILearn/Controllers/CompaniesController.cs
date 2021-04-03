@@ -3,6 +3,8 @@ using Contracts.Interfaces.Entities;
 using Contracts.Interfaces.Logging;
 using Entities.DataTransferObjects;
 using Entities.Models;
+using Marvin.Cache.Headers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -15,6 +17,7 @@ namespace UltimateWebAPILearn.Controllers
 {
     [Route("api/companies")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = "v1")]
     public class CompaniesController : ControllerBase
     {
         private readonly IRepositoryManager _repository;
@@ -28,7 +31,18 @@ namespace UltimateWebAPILearn.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpOptions]
+        public IActionResult GetCompaniesOptions()
+        {
+            Response.Headers.Add("Allow", "GET, OPTIONS, POST");
+            return Ok();
+        }
+
+        /// <summary>
+        /// Gets the list of all companies
+        /// </summary>
+        /// <returns>The companies list</returns>
+        [HttpGet(Name = "GetCompanies"), Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetCompanies()
         {
             var companiesDto = _mapper.Map<IEnumerable<CompanyDto>>(await _repository.Company.GetAllCompaniesAsync(false));
@@ -54,6 +68,8 @@ namespace UltimateWebAPILearn.Controllers
         }
 
         [HttpGet("{id}", Name = "CompanyById")]
+        [HttpCacheExpiration(CacheLocation = CacheLocation.Public, MaxAge = 60)]
+        [HttpCacheValidation(MustRevalidate = false)]
         public async Task<IActionResult> GetCompany(Guid id)
         {
             var company = await _repository.Company.GetCompanyAsync(id, trackChanges: false);
@@ -62,7 +78,18 @@ namespace UltimateWebAPILearn.Controllers
             return Ok(companyDto);
         }
 
-        [HttpPost]
+        /// <summary>
+        /// Creates a newly created company
+        /// </summary>
+        /// <param name="company"></param>
+        /// <returns>A newly created company</returns>
+        /// <response code="201">Returns the newly created item</response>
+        /// <response code="400">If the item is null</response>
+        /// <response code="422">If the model is invalid</response>
+        [HttpPost(Name = "CreateCompany")]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(422)]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateCompany([FromBody] CompanyForCreationDto company)
         {
